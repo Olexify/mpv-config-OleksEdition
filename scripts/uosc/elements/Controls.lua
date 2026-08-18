@@ -96,14 +96,21 @@ function Controls:init_options()
 		-- Serialize dispositions into OR groups of AND conditions
 		---@type {[string]: boolean}[]
 		local dispositions = {}
+		---@type string[]
+		local disposition_props = {}
 		for _, or_group in ipairs(comma_split(item.disposition)) do
 			local group = {}
 			for _, condition in ipairs(split(or_group, ' *+ *')) do
 				if #condition > 0 then
 					local value = condition:sub(1, 1) ~= '!'
 					local name = not value and condition:sub(2) or condition
-					local prop = name:sub(1, 4) == 'has_' and name or 'is_' .. name
-					group[prop] = value
+					if name:sub(1, 4) == 'has_' or itable_has({'idle', 'image', 'audio', 'video', 'stream'}, name) then
+						local prop = name:sub(1, 4) == 'has_' and name or 'is_' .. name
+						group[prop] = value
+					else
+						disposition_props[#disposition_props + 1] = name
+						group[name] = value
+					end
 				end
 			end
 			dispositions[#dispositions + 1] = group
@@ -180,6 +187,7 @@ function Controls:init_options()
 					name = params[1],
 					render_order = self.render_order,
 					anchor_id = 'controls',
+					on_hide = function() self:reflow() end,
 				})
 				table_assign(control, {element = element, sizing = 'static', scale = 1, ratio = 1})
 			end
@@ -198,6 +206,11 @@ function Controls:init_options()
 			break
 		end
 
+		if control.element then
+			for _, prop in ipairs(disposition_props) do
+				control.element:observe_mp_property(prop, function() self:reflow() end)
+			end
+		end
 		self.controls[#self.controls + 1] = control
 	end
 
@@ -205,7 +218,7 @@ function Controls:init_options()
 end
 
 function Controls:reflow()
-	-- Populate the layout only with items that match current disposition
+	-- Populate the layout only with items that are not hidden and match current disposition
 	self.layout = {}
 	for _, control in ipairs(self.controls) do
 		local matches = false
@@ -216,7 +229,14 @@ function Controls:reflow()
 			local group_matches = true
 			for prop, value in pairs(group) do
 				conditions_num = conditions_num + 1
-				if state[prop] ~= value then
+				---@type boolean
+				local current_value
+				if prop:sub(1, 4) == 'has_' or prop:sub(1, 3) == 'is_' then
+					current_value = state[prop]
+				else
+					current_value = mp.get_property_bool(prop, false)
+				end
+				if current_value ~= value then
 					group_matches = false
 					break
 				end
@@ -228,8 +248,9 @@ function Controls:reflow()
 		end
 
 		if conditions_num == 0 then matches = true end
-		if control.element then control.element.enabled = matches end
-		if matches then self.layout[#self.layout + 1] = control end
+		local show = matches and (not control.element or control.element.hide ~= true)
+		if control.element then control.element.enabled = show end
+		if show then self.layout[#self.layout + 1] = control end
 	end
 
 	self:update_dimensions()
@@ -268,7 +289,7 @@ function Controls:register_badge_updater(badge, element)
 	if is_external_prop then
 		element['on_external_prop_' .. prop] = function(_, value) handler(prop, value) end
 	else
-		self:observe_mp_property(observable_name, handler)
+		element:observe_mp_property(observable_name, handler)
 	end
 end
 
@@ -356,15 +377,65 @@ function Controls:update_dimensions()
 	local width_for_dynamics = available_width - statics_width
 	local empty_space_width = width_for_dynamics - max_dynamics_width
 	local width_for_gaps = math.min(empty_space_width, size * gaps)
-	local individual_space_width = spaces > 0 and ((empty_space_width - width_for_gaps) / spaces) or 0
 
+	-- Calculate per-space widths: if exactly 2 spaces, center content between them absolutely
+	local space_widths = {}
+	if spaces == 2 then
+		-- Measure content width in each section: before space1, between spaces, after space2
+		local section = 1
+		local section_widths = {0, 0, 0}
+		for c, control in ipairs(self.layout) do
+			if not control.hide then
+				if control.sizing == 'space' then
+					section = section + 1
+				else
+					local w = 0
+					if control.sizing == 'gap' then
+						if width_for_gaps > 0 then w = width_for_gaps * (control.ratio / gaps) end
+					elseif control.sizing == 'static' then
+						w = size * control.scale * control.ratio + (c ~= #self.layout and spacing or 0)
+					elseif control.sizing == 'dynamic' then
+						local height = size * control.scale
+						w = (max_dynamics_width < width_for_dynamics
+							and height * control.ratio or width_for_dynamics * ((control.scale * control.ratio) / dynamic_units))
+							+ (c ~= #self.layout and spacing or 0)
+					end
+					section_widths[section] = section_widths[section] + w
+				end
+			end
+		end
+		local left_w, middle_w = section_widths[1], section_widths[2]
+		local total_space = empty_space_width - width_for_gaps
+		-- For absolute centering: space1 + left_w + middle_w/2 = available_width/2
+		local space1 = (available_width - middle_w) / 2 - left_w + spacing / 2
+		local space2 = total_space - space1
+		-- Clamp: both spaces must be non-negative. If one side would go negative,
+		-- transfer the deficit to the other side so space1 + space2 == total_space
+		-- is preserved whenever that's still possible (i.e. total_space >= 0).
+		if space1 < 0 then
+			space2 = space2 + space1
+			space1 = 0
+		elseif space2 < 0 then
+			space1 = space1 + space2
+			space2 = 0
+		end
+		if space1 < 0 then space1 = 0 end
+		if space2 < 0 then space2 = 0 end
+		space_widths = {space1, space2}
+	else
+		local individual_space_width = spaces > 0 and ((empty_space_width - width_for_gaps) / spaces) or 0
+		for i = 1, spaces do space_widths[i] = individual_space_width end
+	end
+
+	local space_index = 0
 	for c, control in ipairs(self.layout) do
 		if not control.hide then
 			local sizing, element, scale, ratio = control.sizing, control.element, control.scale, control.ratio
 			local width, height = 0, 0
 
 			if sizing == 'space' then
-				if individual_space_width > 0 then width = individual_space_width end
+				space_index = space_index + 1
+				width = space_widths[space_index] or 0
 			elseif sizing == 'gap' then
 				if width_for_gaps > 0 then width = width_for_gaps * (ratio / gaps) end
 			elseif sizing == 'static' then

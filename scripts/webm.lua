@@ -51,6 +51,7 @@ local options = {
 	-- av1
 	-- hevc
 	-- webm-vp9 (libvpx-vp9/libopus)
+	-- webp
 	-- avc (h264/AAC)
 	-- avc-nvenc (h264-NVENC/AAC)
 	-- webm-vp8 (libvpx/libvorbis)
@@ -96,6 +97,9 @@ local options = {
 	-- Force square pixels on output video
 	-- Some players like recent Firefox versions display videos with non-square pixels with wrong aspect ratio
 	force_square_pixels = false,
+	-- MPV command to run upon successful encoding
+	-- %{output} will be replaced with the path to the resulting file.
+	completion_command = "",
 }
 
 mpopts.read_options(options)
@@ -1400,6 +1404,71 @@ do
   GIF = _class_0
 end
 formats["gif"] = GIF()
+local WebP
+do
+  local _class_0
+  local _parent_0 = Format
+  local _base_0 = {
+    getFlags = function(self)
+      local qscale = math.max(0, math.min(100, 100 - (options.crf * 2.5)))
+      return {
+        "--ovcopts-add=threads=" .. tostring(options.threads),
+        "--ovcopts-add=compression_level=6",
+        "--ovcopts-add=qscale=" .. tostring(qscale),
+        "--ofopts-add=loop=0"
+      }
+    end,
+    postCommandModifier = function(self, command, region, startTime, endTime)
+      local new_command = { }
+      for _, v in ipairs(command) do
+        if not v:match("^%-%-ovcopts%-add=crf=") then
+          append(new_command, {
+            v
+          })
+        end
+      end
+      return new_command
+    end
+  }
+  _base_0.__index = _base_0
+  setmetatable(_base_0, _parent_0.__base)
+  _class_0 = setmetatable({
+    __init = function(self)
+      self.displayName = "WebP"
+      self.supportsTwopass = false
+      self.videoCodec = "libwebp"
+      self.audioCodec = ""
+      self.outputExtension = "webp"
+      self.acceptsBitrate = false
+    end,
+    __base = _base_0,
+    __name = "WebP",
+    __parent = _parent_0
+  }, {
+    __index = function(cls, name)
+      local val = rawget(_base_0, name)
+      if val == nil then
+        local parent = rawget(cls, "__parent")
+        if parent then
+          return parent[name]
+        end
+      else
+        return val
+      end
+    end,
+    __call = function(cls, ...)
+      local _self_0 = setmetatable({}, _base_0)
+      cls.__init(_self_0, ...)
+      return _self_0
+    end
+  })
+  _base_0.__class = _class_0
+  if _parent_0.__inherited then
+    _parent_0.__inherited(_parent_0, _class_0)
+  end
+  WebP = _class_0
+end
+formats["webp"] = WebP()
 local Page
 do
   local _class_0
@@ -1766,11 +1835,12 @@ local get_sub_options
 get_sub_options = function()
   local ret = { }
   append_property(ret, "sub-ass-override")
-  append_property(ret, "sub-ass-force-style")
-  append_property(ret, "sub-ass-vsfilter-aspect-compat")
+  append_property(ret, "sub-ass-style-overrides")
+  append_property(ret, "sub-ass-use-video-data")
   append_property(ret, "sub-auto")
   append_property(ret, "sub-pos")
   append_property(ret, "sub-delay")
+  append_property(ret, "sub-speed")
   append_property(ret, "sub-scale")
   append_property(ret, "sub-font")
   append_property(ret, "sub-font-size")
@@ -2112,6 +2182,9 @@ encode = function(region, startTime, endTime, attempt, overrideCrf, lastSize, ta
     if res then
       message("Encoded successfully! Saved to\\N" .. tostring(bold(out_path)) .. "\\NCRF: " .. tostring(crf))
       emit_event("encode-finished", "success")
+      if options.completion_command ~= "" then
+        mp.command(options.completion_command:gsub("%%{output}", out_path))
+      end
     else
       message("Encode failed! Check the logs for details.")
       emit_event("encode-finished", "fail")
@@ -2721,7 +2794,22 @@ do
             "source"
           },
           {
+            4
+          },
+          {
+            8
+          },
+          {
+            12
+          },
+          {
             15
+          },
+          {
+            16
+          },
+          {
+            20
           },
           {
             24
@@ -2739,6 +2827,9 @@ do
             60
           },
           {
+            90
+          },
+          {
             120
           },
           {
@@ -2753,6 +2844,7 @@ do
         "avc",
         "avc-nvenc",
         "webm-vp8",
+        "webp",
         "gif",
         "mp3",
         "raw"
