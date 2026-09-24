@@ -91,14 +91,16 @@ local function load_tree()
 end
 
 -- Whether an entry's option is currently on, so the wheel can mark it:
--- plain "cycle <flag>" toggles, shader toggles, and the sort choices that
--- sort-playlist.lua publishes.
+-- plain "cycle <flag>" toggles, shader toggles, and script bindings whose
+-- script publishes its state in user-data/<script>: a binding is on when the
+-- field of the same name is true (e.g. wrap, subfolders), or when it is the
+-- published `mode` (the sort order).
 local function is_on(cmd)
-    local b = cmd:match('^script%-binding%s+sort_playlist/([%w%-]+)')
-    if b then
-        local s = mp.get_property_native('user-data/sort_playlist') or {}
-        if b == 'subfolders' then return s.subfolders == true end
-        return s.mode == (b:gsub('%-', '_'))
+    local script, name = cmd:match('^script%-binding%s+([%w_]+)/([%w%-]+)')
+    if script then
+        local s = mp.get_property_native('user-data/' .. script)
+        if type(s) ~= 'table' then return false end
+        return s[name] == true or s.mode == (name:gsub('%-', '_'))
     end
     local prop = cmd:match('^cycle%s+([%w%-]+)%s*$')
     if prop then return mp.get_property_native(prop) == true end

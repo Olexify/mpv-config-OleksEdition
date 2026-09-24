@@ -409,7 +409,14 @@ local function open_menu()
         active    = subfolders,
         value     = { 'script-binding', SCRIPT .. '/subfolders' },
     }
-    items[#items - 1].separator = true                      -- line above the toggle
+    items[#items - 1].separator = true                      -- line above the toggles
+    local wrap = (mp.get_property_native('user-data/playlist_repeat') or {}).wrap == true
+    items[#items + 1] = {
+        title  = 'Wrap Up/Down',
+        hint   = wrap and 'on' or 'off',
+        active = wrap,
+        value  = { 'script-binding', 'playlist_repeat/wrap' },
+    }
     mp.commandv('script-message-to', 'uosc', 'open-menu', utils.format_json({
         type  = 'sort_playlist',
         title = 'Sort playlist',
