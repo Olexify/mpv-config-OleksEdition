@@ -36,6 +36,8 @@ Put the contents of this repository in a folder named `portable_config` next to 
 - `Ctrl+Z` restores the last trashed files (up to 5).
 
 **Other changes**
+- No Windows title bar: drag the video to move the window, use the top bar buttons to
+  minimise / maximise / close; edges still resize. A click pauses, a drag does not.
 - `Up` / `Down` go to the previous / next file. Hold to keep skipping: it starts at about
   8 files a second and speeds up to 40. At the top or end they stop, or wrap round with
   *Sort › Wrap Up/Down*. A press made while a new folder is still being sorted waits for it.
@@ -64,7 +66,7 @@ Scripts
 - [tomasklaen/uosc](https://github.com/tomasklaen/uosc) (5.10)
 - [serenae-fansubs/webm](https://github.com/serenae-fansubs/mpv-webm)
 - [Idlusen/mpv-ytsub](https://github.com/Idlusen/mpv-ytsub) (modified)
-- Oleks Edition: `radial-menu`, `sort-playlist`, `trash-file`, `playlist_repeat`, `mpv-path-helper`
+- Oleks Edition: `radial-menu`, `sort-playlist`, `trash-file`, `playlist_repeat`, `click-pause`, `mpv-path-helper`
 
 Shaders
 - [bjin/mpv-prescalers](https://github.com/bjin/mpv-prescalers) — RAVU, NNEDI3 (LGPL)
