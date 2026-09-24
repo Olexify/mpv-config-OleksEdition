@@ -289,6 +289,27 @@ local function describe(key, rev)
     return KEY_LABEL[key] .. (rev and ' ↓' or ' ↑')
 end
 
+-- Whether autoload puts the videos inside subfolders into the playlist. Lives
+-- in autoload.conf because that is the script that reads it.
+local subfolders
+do
+    local a = { directory_mode = 'ignore' }
+    options.read_options(a, 'autoload')
+    subfolders = a.directory_mode == 'recursive'
+end
+
+-- Published for other scripts: the wheel marks the current choices with a
+-- dot, and playlist_repeat.lua holds an Up/Down press while `pending` is set,
+-- so you never step through a playlist that is about to be reordered.
+local pending = false
+local function publish()
+    mp.set_property_native('user-data/sort_playlist',
+        { mode = current, subfolders = subfolders, pending = pending })
+end
+local function set_pending(v)
+    if pending ~= v then pending = v; publish() end
+end
+
 -- autoload appends entries in bursts after the first file is already playing,
 -- so sort a moment after the last playlist change rather than once on load.
 -- Our own playlist-move calls do not change playlist-count, so this cannot feed
@@ -296,15 +317,16 @@ end
 local resort_timer = nil
 schedule_sort = function()
     if o.auto == 'off' then return end
+    if signature(mp.get_property_native('playlist')) == last_sig then return end
+    set_pending(true)
     if resort_timer then resort_timer:kill() end
-    resort_timer = mp.add_timeout(0.25, function()
+    resort_timer = mp.add_timeout(0.1, function()
         resort_timer = nil
-        local sig = signature(mp.get_property_native('playlist'))
-        if sig == last_sig then return end                  -- already ordered
         local key, rev = resolve(current)
-        if not key then return end                          -- detection pending
+        if not key then return end          -- Explorer answer on its way; it reschedules
         sort(key, rev)
         last_sig = signature(mp.get_property_native('playlist'))
+        set_pending(false)
     end)
 end
 
@@ -331,19 +353,6 @@ local function persist(file, key, value)
     w:close()
 end
 
--- Whether autoload puts the videos inside subfolders into the playlist. Lives
--- in autoload.conf because that is the script that reads it.
-local subfolders
-do
-    local a = { directory_mode = 'ignore' }
-    options.read_options(a, 'autoload')
-    subfolders = a.directory_mode == 'recursive'
-end
-
--- Current choices, for the wheel menu to mark with a dot.
-local function publish()
-    mp.set_property_native('user-data/sort_playlist', { mode = current, subfolders = subfolders })
-end
 
 local function set_subfolders(on)
     subfolders = on
@@ -368,6 +377,7 @@ local function apply(mode_name)
         last_sig = signature(mp.get_property_native('playlist'))
         mp.osd_message(('Sort: %s (%s)'):format(label, describe(key, rev)), 2)
     else
+        set_pending(true)
         mp.osd_message('Sort: ' .. label .. ' (asking Explorer...)', 2)
     end
 end

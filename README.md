@@ -36,7 +36,8 @@ Put the contents of this repository in a folder named `portable_config` next to 
 - `Ctrl+Z` restores the last trashed files (up to 5).
 
 **Other changes**
-- `Up` / `Down` go to the previous / next file; hold to skip quickly.
+- `Up` / `Down` go to the previous / next file and stop at either end; hold half a second
+  to keep skipping. A press made while a new folder is still being sorted waits for it.
 - Resuming a file restores position, tracks and volume, but never zoom or pan.
 - Only one folder scanner (`autoload.lua`); uosc's own autoload is off.
 - `ytsub` works when mpv is started from Explorer (it used to require `%HOME%`).
