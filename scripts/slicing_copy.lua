@@ -131,7 +131,7 @@ local function cut(shift, endpos)
     cmds:arg(outpath)
     msg.info("Run commands: " .. cmds:as_str())
     local screenx, screeny, aspect = mp.get_osd_size()
-    mp.set_osd_ass(screenx, screeny, "{\\an9}● ")
+    mp.set_osd_ass(screenx, screeny, "{\\an9}â—Â ")
     local res, err = cmds:run()
     mp.set_osd_ass(screenx, screeny, "")
     if err then

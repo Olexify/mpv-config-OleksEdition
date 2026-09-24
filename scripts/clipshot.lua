@@ -26,11 +26,11 @@ if platform == 'windows' then
     }
 elseif platform == 'darwin' then
     file = os.getenv('TMPDIR')..'/'..o.name
-    -- png: «class PNGf»
+    -- png: Â«class PNGfÂ»
     local type = o.type ~= '' and o.type or 'JPEG picture'
     cmd = {
         'osascript', '-e', ([[
-            set the clipboard to ( ¬
+            set the clipboard to ( Â¬
                 read (POSIX file %q) as %s)
         ]]):format(file, type)
     }

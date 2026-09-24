@@ -476,8 +476,8 @@ do
 end
 
 do
-	local wrap_at_chars = {' ', '　', '-', '–'}
-	local remove_when_wrap = {' ', '　'}
+	local wrap_at_chars = {' ', 'ã€€', '-', 'â€“'}
+	local remove_when_wrap = {' ', 'ã€€'}
 
 	---Wrap the text at the closest opportunity to target_line_length
 	---@param text string
@@ -536,8 +536,8 @@ end
 
 do
 	local word_separators = create_set({
-		' ', '　', '\t', '-', '–', '_', ',', '.', '+', '&', '(', ')', '[', ']', '{', '}', '<', '>', '/', '\\',
-		'（', '）', '【', '】', '；', '：', '《', '》', '“', '”', '‘', '’', '？', '！',
+		' ', 'ã€€', '\t', '-', 'â€“', '_', ',', '.', '+', '&', '(', ')', '[', ']', '{', '}', '<', '>', '/', '\\',
+		'ï¼ˆ', 'ï¼‰', 'ã€', 'ã€‘', 'ï¼›', 'ï¼š', 'ã€Š', 'ã€‹', 'â€œ', 'â€', 'â€˜', 'â€™', 'ï¼Ÿ', 'ï¼',
 	})
 
 	---Get the first character of each word
@@ -599,8 +599,8 @@ function highlight_match(text, byte_positions, font_color, bold)
 	end
 
 	table.sort(byte_positions)
-	local start_tag = '{\\c&H' .. config.color.match .. '&\\b' .. (bold and '1' or '0') .. '}'
-	local end_tag   = '{\\c&H' .. font_color .. '&}'
+	local start_tag = '{\\c&H' .. config.color.match .. '&\\b1}'
+	local end_tag   = '{\\c&H' .. font_color .. '&\\b' .. (bold and '1' or '0') .. '}'
 
 	local result = {}
 	local pos_set = {}

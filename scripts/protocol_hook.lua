@@ -648,4 +648,3 @@ mp.add_hook("on_load", 1, function()
         hook_count = hook_count + 1
     end
 end)
-

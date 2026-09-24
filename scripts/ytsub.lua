@@ -3,8 +3,8 @@ local function want(name)
   local out; if xpcall(
       function()  out = require(name) end,
       function(e) out = e end)
-  then return out          -- success
-  else return nil, out end -- error
+  then return out          -- success                                     
+  else return nil, out end -- error                                       
 end
 
 local utils = require('mp.utils')
@@ -14,80 +14,35 @@ local http = want("socket.http")
 local https = want("ssl.https")
 
 local options = {
-    source_lang = 'en', -- en fr es de and the like
+    source_lang = "fr",
     load_autosub_binding = "alt+y",
     autoload_autosub_binding = "alt+Y",
-    cache_dir = ".cache/ytsub/",
-    filter_sub_single_line = false,
+    cache_dir = utils.join_path(os.getenv("HOME") or os.getenv("USERPROFILE") or "", ".cache/ytsub/"),
 }
 require("mp.options").read_options(options)
 
 -- create cache directory for subtitles if it doesn't exist
 local res = utils.file_info(options.cache_dir)
 if not res or not res.is_dir then
-    local command
-    local platform = mp.get_property_native("platform") or "unknown"
-
-    if string.find(platform, "win") then
-        -- This is Windows
-        -- Convert path to use backslashes and run via cmd.exe
-        options.cache_dir = utils.join_path(os.getenv("USERPROFILE"), options.cache_dir)
-        options.cache_dir = string.gsub(options.cache_dir, "/", "\\")
-        command = {
-            name = "subprocess",
-            args = {"cmd", "/c", "if not exist", options.cache_dir, "mkdir", options.cache_dir},
-            playback_only = false,
-        }
-    else
-        -- This is likely Linux, macOS, or another Unix-like system
-        -- Use mkdir -p to create parent directories if they don't exist
-        options.cache_dir =  utils.join_path(os.getenv("HOME"), options.cache_dir)
-        command = {
-            name = "subprocess",
-            args = {"mkdir", "-p", options.cache_dir},
-            playback_only = false,
-        }
-    end
-    mp.command_native(command)
+    mp.command_native({
+        name = "subprocess",
+        args = {"mkdir", options.cache_dir},
+        playback_only = false,
+    })
 end
 
 local function info(msg)
-    print(msg)
-    mp.osd_message('ytsub : ' .. msg, 5)
-end
-
-local function filter_sub(path)
-    local lines = {}
-    for line in io.lines(path) do
-        table.insert(lines, line)
-    end
-    local out = io.open(path, "w")
-    if out ~= nil then
-        for i,line in pairs(lines) do
-            if i < 5 or i % 8 == 5 or i % 8 == 7 or i % 8 == 0 then
-                out:write(line)
-                out:write("\n")
-            end
-            i = i + 1
-        end
-    end
+    mp.osd_message('ytsubÂ : ' .. msg, 5)
 end
 
 local function load_autosub(lang, sub_info, ytid, is_primary)
     local lang_name
     local url
-
-    if sub_info ~= nil then
-        for _,v in pairs(sub_info) do
-            lang_name = v["name"]
-            if v["ext"] == "vtt" then
-                url = v["url"]
-            end
+    for _,v in pairs(sub_info) do
+        lang_name = v["name"]
+        if v["ext"] == "vtt" then
+            url = v["url"]
         end
-    end
-    if lang_name == nil or url == nil then
-        info('could not get lang name or url from sub info')
-        return
     end
 
     info('loading '..lang_name)
@@ -105,21 +60,20 @@ local function load_autosub(lang, sub_info, ytid, is_primary)
         -- sub file not already present, download
         if http ~= nil and https ~= nil then
             -- downloading via direct url
-            local body, status = http.request(url)
-            if body ~= nil and status == 200 then
+            local body, _ = http.request(url)
+            if body ~= nil then
                 f = assert(io.open(subfile, 'wb'))
                 f:write(body)
                 f:close()
                 sub_is_available = true
             end
-        end
-        if not sub_is_available then
-            -- lua http modules not available or download failed, download via yt-dlp
+        else
+            -- lua http modules not available, download via yt-dlp
             local ytdl_path = mp.get_property_native('user-data/mpv/ytdl/path')
             if ytdl_path ~= nil then
                 mp.command_native({
                     name = "subprocess",
-                    args = {ytdl_path, "--skip-download", "--sub-lang", lang, "--write-auto-sub", "-o", subfile_base, "--", ytid}
+                    args = {ytdl_path, "--skip-download", "--sub-lang", lang, "--write-auto-sub", "-o", subfile_base, ytid}
                 })
                 f = io.open(subfile, "r")
                 if f ~= nil then
@@ -128,12 +82,9 @@ local function load_autosub(lang, sub_info, ytid, is_primary)
                 end
             end
         end
-        if sub_is_available and options.filter_sub_single_line then
-            filter_sub(subfile)
-        end
     end
 
-    -- load the subtitle file as track and select it
+    -- load the subtitle file as track ans select it
     if sub_is_available then
         if is_primary then
             mp.command("sub-add " .. subfile .. " select 'youtube auto-sub' '" .. lang .. "'")
@@ -166,7 +117,7 @@ local function ytsub(is_auto)
 
     local j = utils.parse_json(ytdl_output['stdout'])
     local subs = j['automatic_captions']
-    if subs == nil or next(subs) == nil then
+    if subs == nil then
         info('no auto-subs found')
         return
     end
@@ -185,12 +136,10 @@ local function ytsub(is_auto)
         end
 
         load_autosub(orig_lang, subs[orig_lang], j["id"], true)
-        if source_lang ~= nil then
-            if orig_lang == source_lang.."-orig" then
-                info("source language and original language are the same ("..source_lang..")")
-            else
-                load_autosub(source_lang, subs[source_lang], j["id"], false)
-            end
+        if orig_lang == source_lang.."-orig" then
+            info("source language and original language are the same ("..source_lang..")")
+        else
+            load_autosub(source_lang, subs[source_lang], j["id"], false)
         end
 
     else
@@ -208,5 +157,5 @@ local function ytsub(is_auto)
     end
 end
 
-mp.add_key_binding(options.load_autosub_binding, "load_autosub_binding", function() ytsub(false) end)
-mp.add_key_binding(options.autoload_autosub_binding, "autoload_autosub_binding", function() ytsub(true) end)
+mp.add_key_binding(options.load_autosub_binding, "load", function() ytsub(false) end)
+mp.add_key_binding(options.autoload_autosub_binding, "auto", function() ytsub(true) end)

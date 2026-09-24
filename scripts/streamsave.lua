@@ -270,7 +270,7 @@ local track = {
     suspend,         -- suspension interval on track-list changes
 }
 
-local update = {}       -- option update functions, {mode, label, on_demand} ⊈ update
+local update = {}       -- option update functions, {mode, label, on_demand} âŠˆ update
 local segments = {}     -- chapter segments set for writing
 local chapter_list = {} -- initial chapter list
 local ab_chapters = {}  -- A-B loop point chapters

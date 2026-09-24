@@ -26,10 +26,10 @@ local opts = {
     ytdl_ver = 'yt-dlp',
 
     --formatting / cursors
-    selected_and_active     = '▶  - ',
-    selected_and_inactive   = '●  - ',
-    unselected_and_active   = '▷ - ',
-    unselected_and_inactive = '○ - ',
+    selected_and_active     = 'â–¶  - ',
+    selected_and_inactive   = 'â—  - ',
+    unselected_and_active   = 'â–· - ',
+    unselected_and_inactive = 'â—‹ - ',
 
     --font size scales by window, if false requires larger font and padding sizes
     scale_playlist_by_window = true,
@@ -960,7 +960,7 @@ local function uosc_menu_open(formats, active_format, menu_type)
         title = t('Disabled'),
         italic = true,
         muted = true,
-        hint = '—',
+        hint = 'â€”',
         active = active_format == '',
         value = {
             'script-message-to',

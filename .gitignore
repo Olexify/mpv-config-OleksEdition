@@ -1,4 +1,10 @@
-
 *.log
 *.cache
 cache/
+
+# Local only: backups, archives, generated config dumps
+_backup_*/
+*.rar
+*.zip
+mpvbundledlexi.txt
+tounbundle.txt

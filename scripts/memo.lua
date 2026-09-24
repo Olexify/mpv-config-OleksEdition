@@ -279,53 +279,53 @@ function unaccent(str)
 
     -- "Basic Latin".."Latin-1 Supplement".."Latin Extended-A".."Latin Extended-B"
     local charmap =
-    "AÀÁÂÃÄÅĀĂĄǍǞǠǺȀȂȦȺAEÆǢǼ"..
-    "BßƁƂƄɃ"..
-    "CÇĆĈĊČƆƇȻ"..
-    "DÐĎĐƉƊDZƻǄǱDzǅǲ"..
-    "EÈÉÊËĒĔĖĘĚƎƏƐȄȆȨɆ"..
-    "FƑ"..
-    "GĜĞĠĢƓǤǦǴ"..
-    "HĤĦȞHuǶ"..
-    "IÌÍÎÏĨĪĬĮİƖƗǏȈȊIJĲ"..
-    "JĴɈ"..
-    "KĶƘǨ"..
-    "LĹĻĽĿŁȽLJǇLjǈ"..
-    "NÑŃŅŇŊƝǸȠNJǊNjǋ"..
-    "OÒÓÔÕÖØŌŎŐƟƠǑǪǬǾȌȎȪȬȮȰOEŒOIƢOUȢ"..
-    "PÞƤǷ"..
-    "QɊ"..
-    "RŔŖŘȐȒɌ"..
-    "SŚŜŞŠƧƩƪƼȘ"..
-    "TŢŤŦƬƮȚȾ"..
-    "UÙÚÛÜŨŪŬŮŰŲƯƱƲȔȖɄǓǕǗǙǛ"..
-    "VɅ"..
-    "WŴƜ"..
-    "YÝŶŸƳȜȲɎ"..
-    "ZŹŻŽƵƷƸǮȤ"..
-    "aàáâãäåāăąǎǟǡǻȁȃȧaeæǣǽ"..
-    "bƀƃƅ"..
-    "cçćĉċčƈȼ"..
-    "dðƌƋƍȡďđdbȸdzǆǳ"..    
-    "eèéêëēĕėęěǝȅȇȩɇ"..
-    "fƒ"..
-    "gĝğġģƔǥǧǵ"..
-    "hĥħȟhvƕ"..
-    "iìíîïĩīĭįıǐȉȋijĳ"..
-    "jĵǰȷɉ"..
-    "kķĸƙǩ"..
-    "lĺļľŀłƚƛȴljǉ"..
-    "nñńņňŉŋƞǹȵnjǌ"..
-    "oòóôõöøōŏőơǒǫǭǿȍȏȫȭȯȱoeœoiƣouȣ"..
-    "pþƥƿ"..
-    "qɋqpȹ"..
-    "rŕŗřƦȑȓɍ"..
-    "sśŝşšſƨƽșȿ"..
-    "tţťŧƫƭțȶtsƾ"..
-    "uùúûüũūŭůűųưǔǖǘǚǜȕȗ"..
-    "wŵ"..
-    "yýÿŷƴȝȳɏ"..
-    "zźżžƶƹƺǯȥɀ"
+    "AÃ€ÃÃ‚ÃƒÃ„Ã…Ä€Ä‚Ä„ÇÇžÇ ÇºÈ€È‚È¦ÈºAEÃ†Ç¢Ç¼"..
+    "BÃŸÆÆ‚Æ„Éƒ"..
+    "CÃ‡Ä†ÄˆÄŠÄŒÆ†Æ‡È»"..
+    "DÃÄŽÄÆ‰ÆŠDZÆ»Ç„Ç±DzÇ…Ç²"..
+    "EÃˆÃ‰ÃŠÃ‹Ä’Ä”Ä–Ä˜ÄšÆŽÆÆÈ„È†È¨É†"..
+    "FÆ‘"..
+    "GÄœÄžÄ Ä¢Æ“Ç¤Ç¦Ç´"..
+    "HÄ¤Ä¦ÈžHuÇ¶"..
+    "IÃŒÃÃŽÃÄ¨ÄªÄ¬Ä®Ä°Æ–Æ—ÇÈˆÈŠIJÄ²"..
+    "JÄ´Éˆ"..
+    "KÄ¶Æ˜Ç¨"..
+    "LÄ¹Ä»Ä½Ä¿ÅÈ½LJÇ‡LjÇˆ"..
+    "NÃ‘ÅƒÅ…Å‡ÅŠÆÇ¸È NJÇŠNjÇ‹"..
+    "OÃ’Ã“Ã”Ã•Ã–Ã˜ÅŒÅŽÅÆŸÆ Ç‘ÇªÇ¬Ç¾ÈŒÈŽÈªÈ¬È®È°OEÅ’OIÆ¢OUÈ¢"..
+    "PÃžÆ¤Ç·"..
+    "QÉŠ"..
+    "RÅ”Å–Å˜ÈÈ’ÉŒ"..
+    "SÅšÅœÅžÅ Æ§Æ©ÆªÆ¼È˜"..
+    "TÅ¢Å¤Å¦Æ¬Æ®ÈšÈ¾"..
+    "UÃ™ÃšÃ›ÃœÅ¨ÅªÅ¬Å®Å°Å²Æ¯Æ±Æ²È”È–É„Ç“Ç•Ç—Ç™Ç›"..
+    "VÉ…"..
+    "WÅ´Æœ"..
+    "YÃÅ¶Å¸Æ³ÈœÈ²ÉŽ"..
+    "ZÅ¹Å»Å½ÆµÆ·Æ¸Ç®È¤"..
+    "aÃ Ã¡Ã¢Ã£Ã¤Ã¥ÄÄƒÄ…ÇŽÇŸÇ¡Ç»ÈÈƒÈ§aeÃ¦Ç£Ç½"..
+    "bÆ€ÆƒÆ…"..
+    "cÃ§Ä‡Ä‰Ä‹ÄÆˆÈ¼"..
+    "dÃ°ÆŒÆ‹ÆÈ¡ÄÄ‘dbÈ¸dzÇ†Ç³"..
+    "eÃ¨Ã©ÃªÃ«Ä“Ä•Ä—Ä™Ä›ÇÈ…È‡È©É‡"..
+    "fÆ’"..
+    "gÄÄŸÄ¡Ä£Æ”Ç¥Ç§Çµ"..
+    "hÄ¥Ä§ÈŸhvÆ•"..
+    "iÃ¬Ã­Ã®Ã¯Ä©Ä«Ä­Ä¯Ä±ÇÈ‰È‹ijÄ³"..
+    "jÄµÇ°È·É‰"..
+    "kÄ·Ä¸Æ™Ç©"..
+    "lÄºÄ¼Ä¾Å€Å‚ÆšÆ›È´ljÇ‰"..
+    "nÃ±Å„Å†ÅˆÅ‰Å‹ÆžÇ¹ÈµnjÇŒ"..
+    "oÃ²Ã³Ã´ÃµÃ¶Ã¸ÅÅÅ‘Æ¡Ç’Ç«Ç­Ç¿ÈÈÈ«È­È¯È±oeÅ“oiÆ£ouÈ£"..
+    "pÃ¾Æ¥Æ¿"..
+    "qÉ‹qpÈ¹"..
+    "rÅ•Å—Å™Æ¦È‘È“É"..
+    "sÅ›ÅÅŸÅ¡Å¿Æ¨Æ½È™È¿"..
+    "tÅ£Å¥Å§Æ«Æ­È›È¶tsÆ¾"..
+    "uÃ¹ÃºÃ»Ã¼Å©Å«Å­Å¯Å±Å³Æ°Ç”Ç–Ç˜ÇšÇœÈ•È—"..
+    "wÅµ"..
+    "yÃ½Ã¿Å·Æ´ÈÈ³É"..
+    "zÅºÅ¼Å¾Æ¶Æ¹ÆºÇ¯È¥É€"
 
     local zero_width_blocks = {
         {0x0000,  0x001F}, -- C0
@@ -350,7 +350,7 @@ function unaccent(str)
         {0x02B0,  0x02FF}, -- Spacing Modifier Letters   0 BMP  Bopomofo (2 characters), Latin (14 characters), Common (64 characters)
     }
 
-    return str:gsub(unimask, function(unichar) 
+    return str:gsub(unimask, function(unichar)
         local unicode = utf8_to_unicode(unichar, 1)
         for _, block in ipairs(zero_width_blocks) do
             if unicode >= block[1] and unicode <= block[2] then
@@ -438,7 +438,7 @@ function loadfile_compat(path)
 end
 
 function menu_json(menu_items, page)
-    local title = (search_query or (dir_menu and "Directories" or "History")) .. " (memo)"
+    local title = (search_query or (dir_menu and "Directories" or "History")) .. ""
     if options.pagination or page ~= 1 then
         title = title .. " - Page " .. page
     end
@@ -638,15 +638,15 @@ function draw_menu()
             local item = menu_data.items[i]
             if item.title then
                 local icon
-                local separator = last_state.selected_index == i and "{\\alpha&HFF&}●{\\alpha&H00&}  - " or "{\\alpha&HFF&}●{\\alpha&H00&} - "
+                local separator = last_state.selected_index == i and "{\\alpha&HFF&}â—{\\alpha&H00&}  - " or "{\\alpha&HFF&}â—{\\alpha&H00&} - "
                 if item.icon == "spinner" then
-                    separator = "⟳ "
+                    separator = "âŸ³ "
                 elseif item.icon == "navigate_next" then
-                    icon = last_state.selected_index == i and "▶" or "▷"
+                    icon = last_state.selected_index == i and "â–¶" or "â–·"
                 elseif item.icon == "navigate_before" then
-                    icon = last_state.selected_index == i and "◀" or "◁"
+                    icon = last_state.selected_index == i and "â—€" or "â—"
                 else
-                    icon = last_state.selected_index == i and "●" or "○"
+                    icon = last_state.selected_index == i and "â—" or "â—‹"
                 end
                 ass:new_event()
                 ass:pos(0.3 * font_size, pos_y + menu_index * font_size)
@@ -702,7 +702,7 @@ function path_info(full_path)
                         input_path = display_path:sub(protocol_end + 1)
                     end
                 end
-                display_path = input_path or display_path:sub(protocol_start, protocol_end)
+                display_path = input_path or display_path
             else
                 is_remote = true
                 display_path = display_path:sub(protocol_end + 1)
@@ -758,6 +758,11 @@ function path_info(full_path)
     local display_path, save_path, effective_path, effective_protocol, is_remote, file_options = resolve(nil, nil, full_path, nil, false)
     effective_path = effective_path or display_path
     save_path = save_path or effective_path
+    if is_remote and not file_options then
+        display_path = display_path:gsub("%%(%x%x)", function(hex)
+            return string.char(tonumber(hex, 16))
+        end)
+    end
 
     return display_path, save_path, effective_path, effective_protocol, is_remote, file_options
 end
@@ -1018,10 +1023,17 @@ function show_history(entries, next_page, prev_page, update, return_items)
             if is_remote then
                 title = display_path
             else
+                local effective_display_path = display_path
+                if file_options then
+                    effective_display_path = file_options
+                end
                 if not dirname then
-                    dirname, basename = mp.utils.split_path(display_path)
+                    dirname, basename = mp.utils.split_path(effective_display_path)
                 end
                 title = basename ~= "" and basename or display_path
+                if file_options then
+                    title = display_path .. " " .. title
+                end
             end
         end
 

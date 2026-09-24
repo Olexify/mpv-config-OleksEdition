@@ -244,12 +244,12 @@ function TopBar:render()
 
 		for _, button in ipairs(self.buttons) do
 			local rect = {ax = button_ax, ay = ay, bx = button_ax + self.size, by = by}
-			local is_hover = get_point_to_rectangle_proximity(cursor, rect) <= 0
+			local is_hover = get_point_to_rectangle_proximity(cursor, rect) == 0
 			local opacity = is_hover and 1 or config.opacity.controls
 			local button_fg = is_hover and (button.hover_fg or bg) or fg
 			local button_bg = is_hover and (button.hover_bg or fg) or bg
 
-			cursor:zone('primary_click', rect, button.command)
+			cursor:zone('primary_down', rect, button.command)
 
 			local bg_size = self.size - margin
 			local bg_ax, bg_ay = rect.ax + (is_left and margin or 0), rect.ay + margin
@@ -291,7 +291,7 @@ function TopBar:render()
 				bx = ax + rect_width,
 				by = by - margin,
 			}
-			local opacity = get_point_to_rectangle_proximity(cursor, rect) <= 0
+			local opacity = get_point_to_rectangle_proximity(cursor, rect) == 0
 				and 1 or config.opacity.playlist_position
 			if opacity > 0 then
 				ass:rect(rect.ax, rect.ay, rect.bx, rect.by, {
@@ -302,7 +302,7 @@ function TopBar:render()
 			if left_aligned then title_bx = rect.ax - margin else title_ax = rect.bx + margin end
 
 			-- Click action
-			cursor:zone('primary_click', rect, function() mp.command('script-binding uosc/playlist') end)
+			cursor:zone('primary_down', rect, function() mp.command('script-binding uosc/playlist') end)
 		end
 
 		-- Skip rendering titles if there's not enough horizontal space
@@ -322,10 +322,17 @@ function TopBar:render()
 				local rect_width = math.min(rect_ideal_width, title_bx - title_ax)
 				local ax = left_aligned and title_bx - rect_width or title_ax
 				local by = by - margin
-				local title_rect = {ax = ax, ay = title_ay, bx = ax + rect_width, by = by}
+				local title_rect = {
+				    ax = ax,
+				    ay = title_ay,
+				    bx = ax + rect_width,
+				    by = by,
+				}
 
 				if options.top_bar_alt_title_place == 'toggle' then
-					cursor:zone('primary_click', title_rect, function() self:toggle_title() end)
+				    cursor:zone('primary_down', title_rect, function()
+				        self:toggle_title()
+				    end)
 				end
 
 				ass:rect(title_rect.ax, title_rect.ay, title_rect.bx, title_rect.by, {
@@ -365,7 +372,7 @@ function TopBar:render()
 			-- Current chapter
 			if self.current_chapter then
 				local padding_half = round(padding / 2)
-				local prefix, postfix = left_aligned and '' or '└ ', left_aligned and ' ┘' or ''
+				local prefix, postfix = left_aligned and '' or 'â”” ', left_aligned and ' â”˜' or ''
 				local text = prefix .. self.current_chapter.index .. ': ' .. self.current_chapter.title .. postfix
 				local next_chapter = state.chapters[self.current_chapter.index + 1]
 				local chapter_end = next_chapter and next_chapter.time or state.duration or 0
@@ -415,7 +422,7 @@ function TopBar:render()
 
 				-- Click action
 				rect.bx = time_bx
-				cursor:zone('primary_click', rect, function() mp.command('script-binding uosc/chapters') end)
+				cursor:zone('primary_down', rect, function() mp.command('script-binding uosc/chapters') end)
 
 				title_ay = rect.by + self.title_spacing
 			end

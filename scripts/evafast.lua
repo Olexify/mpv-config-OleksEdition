@@ -172,7 +172,7 @@ local function adjust_speed()
             if uosc_available then
                 mp.command("script-binding uosc/flash-speed")
             else
-                mp.osd_message(("▶▶ x%.1f"):format(speed))
+                mp.osd_message(("â–¶â–¶ x%.1f"):format(speed))
             end
         end
     end
@@ -233,7 +233,7 @@ local function evafast(keypress)
         freeze = true
         toggle_display = false
         if options.show_seek and not repeated and not uosc_available then
-            mp.osd_message("▶▶")
+            mp.osd_message("â–¶â–¶")
         end
     elseif (keypress["event"] == "up" and (not repeated or speedup_target)) or keypress["event"] == "press" then
         if options.seek_distance ~= 0 then
@@ -305,7 +305,9 @@ mp.register_script_message("get-version", function(script)
     mp.commandv("script-message-to", script, "evafast-version", "1.0")
 end)
 
-mp.add_key_binding("RIGHT", "evafast", evafast, {repeatable = true, complex = true})
+-- mp.add_key_binding("", "evafast", evafast, {repeatable = true, complex = true})   I REMOVED SPEED UP KEY, not comfy
+-- mp.add_key_binding("UP", "evafast", evafast, {repeatable = true, complex = true})
+-- mp.add_key_binding("RIGHT", "evafast", evafast, {repeatable = true, complex = true})
 mp.add_key_binding(nil, "speedup", evafast_speedup)
 mp.add_key_binding(nil, "slowdown", evafast_slowdown)
 mp.add_key_binding(nil, "toggle", evafast_toggle)
