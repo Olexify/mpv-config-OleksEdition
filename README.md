@@ -3,7 +3,7 @@
 A Windows-focused mpv config based on [tuilakhanh/mpv-conf](https://github.com/tuilakhanh/mpv-conf),
 with a right-click wheel menu, Explorer-matching playlist order and a safer delete.
 
-![thumb](https://github.com/user-attachments/assets/9d8f0a63-05a9-405a-9ed4-e8e670d473dc)
+![thumb](https://github.com/user-attachments/assets/f2a68a6b-42c6-4939-ba08-d0f1ecb48be4)
 
 ## Install
 
@@ -47,6 +47,8 @@ Put the contents of this repository in a folder named `portable_config` next to 
 - The uosc subtitle download tool (`ziggy`) is not included, as antivirus software flags it.
 
 ## Scripts and shaders credits
+
+![thumb](https://github.com/user-attachments/assets/9d8f0a63-05a9-405a-9ed4-e8e670d473dc)
 
 Scripts
 - [mpv-player/autocrop](https://github.com/mpv-player/mpv/blob/master/TOOLS/lua/autocrop.lua),
