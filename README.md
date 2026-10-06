@@ -3,7 +3,7 @@
 A Windows-focused mpv config based on [tuilakhanh/mpv-conf](https://github.com/tuilakhanh/mpv-conf),
 with a right-click wheel menu, Explorer-matching playlist order and a safer delete.
 
-![thumb](https://github.com/tuilakhanh/mpv-conf/assets/17153084/908b4514-d85f-4c99-b9c1-28245795ea94)
+![thumb](https://github.com/user-attachments/assets/9d8f0a63-05a9-405a-9ed4-e8e670d473dc)
 
 ## Install
 
